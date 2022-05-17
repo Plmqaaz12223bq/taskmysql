@@ -1,10 +1,8 @@
 <?php
 session_start();
-include_once '../config/connection.php';
-$_SESSION["usersData"];
-if(empty($_SESSION["usersData"])){
-    $_SESSION["usersData"]= [];
-}
+include_once"connection.php";
+
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
     $signUpEmail= $_POST["SignUpEmail"];
@@ -21,6 +19,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         $today = date("Y-m-d");
         $diff = date_diff(date_create($birthDate), date_create($today));
     }
+
+    $sql1 = "SELECT * FROM users_data;";
+    $result = mysqli_query($conn,$sql1);
+    $resultcheck = mysqli_num_rows($result);
+    if($resultcheck > 0)
+    {
+    while($row = mysqli_fetch_assoc($result))
+    {
+        if($row["email"] == $signUpEmail){
+            $alreadyReg= true;
+            break;
+        }else{
+            $alreadyReg= false;
+        }
+    }
+    }
+
+
+
+
 
     if(empty($signUpEmail)){
         $signUpEmailReq= "<span style='color: red;'> Please enter your email </span>";
@@ -73,11 +91,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
     }
 
     else{
-        $Cration_Date= date("d-m-Y");
-        $arr= ["email"=> $signUpEmail, "mobile"=>$mobile, "name"=> $fullName, "password"=>$SignUpPassword, "birthDate"=> $birthDate, "Creation_Date"=>$Cration_Date, "Last-Login-Date"];
-        array_push($_SESSION["usersData"],$arr);
+        
+    $sql= " INSERT INTO users_data (email, mobile , username, passwordd, birth_date)
+        VALUES ('$signUpEmail','$mobile','$fullName', '$SignUpPassword', '$birthDate'); ";
+
+        if(mysqli_query($conn , $sql)){
+        echo 'new record created sucessfuly ';
+        }else{
+        echo "error:".$sql."<br>".mysqli_error($conn);
+        }
+ 
+        mysqli_close($conn);
+        
         header('Location: ../Login Page/index.php');
-    }
 
     if(!empty($signUpEmail)) $x1= $signUpEmail;
     if(!empty($mobile)) $x2= $mobile;

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once '../config/connection.php';
+include_once '../Sign Up Page/connection.php';
 if (isset($_POST['submit']))
 
 if ($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -16,36 +16,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         echo $LoginPasswordReq;
     }
     else{
-        if($LoginEmail == "Admin@admin.com" && $LoginPassword == "SuperUser Admin*22"){
-            header('Location: ../admin Page/index.php');
-        }else if($LoginEmail == "Admin@admin.com" && $LoginPassword != "SuperUser Admin*22"){
-            echo "<span style='color: red;'> The password is wrong </span>";
-        }
-        foreach ($_SESSION["usersData"] as $key => $value) {
-            if($LoginEmail == $value["email"] && $LoginPassword == $value["password"]){
-                $_SESSION["userEmail"]= $value["email"];
-                $_SESSION["userName"]= $value["name"];
-                $_SESSION["userMobile"]= $value["mobile"];
-                $_SESSION["usersData"][$key]["Last-Login-Date"]= date("d-m-Y");
-                header('Location: ../welcome Page/index.php');
-            }else if($LoginEmail == $value["email"] && $LoginPassword != $value["password"]){
-                echo "<span style='color: red;'> The password is wrong </span>";
+
+
+       
+        $sql1 = "SELECT * FROM users_data;";
+        $result = mysqli_query($conn,$sql1);
+        $resultcheck = mysqli_num_rows($result);
+        if($resultcheck > 0)
+        {
+        while($row = mysqli_fetch_assoc($result))
+        {
+            if($row["email"] == $LoginEmail &&  $row["passwordd"] == $LoginPassword){
+                $_SESSION["userEmail"]= $row["email"];
+                $_SESSION["userName"]= $row["username"];
+                $_SESSION["userMobile"]= $row["mobile"];
+    
+                header('Location: ../Welcome Page/index.php');
+            }else{
+                echo "<span style='color: red;'> The Email or password is wrong </span>";
                 break;
-            }else if($value == $_SESSION["usersData"][count($_SESSION["usersData"])-1]){
-                $notFound= "<span style='color: red;'> You are not registered </span>";
             }
         }
-    }
-    if(isset($notFound) && $LoginEmail != "Admin@admin.com"){
-        echo $notFound;
-    }
-
+        }
+        if($LoginEmail == 'abc@gmail.com'){
+            header('Location: ../admin Page/index.php');
+        }
 
 
     if(!empty($LoginEmail)) $x5= $LoginEmail;
 
 }
-
+}
 
 ?>
 

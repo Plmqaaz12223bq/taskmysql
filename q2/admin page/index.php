@@ -1,8 +1,22 @@
 <?php
 session_start();
-include_once '../config/connection.php';
+include_once '../Sign Up Page/connection.php';
+
+if(isset($_POST["delete"])){
+    $id= $_POST["id"];
+    $deletingdata= "DELETE FROM users_data WHERE id=$id;";
+    mysqli_query($conn , $deletingdata);
+}
+
+if(isset($_POST["updatename"])){
+    $idid= $_POST["idid"];
+    $newname= $_POST["newname"];
+    $query= "UPDATE users_data SET username='$newname' WHERE id=$idid;";
+    $x= mysqli_query($conn , $query);
+}
+
 ?>
-?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -53,9 +67,9 @@ include_once '../config/connection.php';
                 <th scope="col">Delete</td>
         </tr>
         <?php
-        $id= 1;
-        $sql1="SELECT * FROM phpform ;";
-        $result= mysqli_query($con , $sql1);
+        
+        $sql1="SELECT * FROM users_data ;";
+        $result= mysqli_query($conn , $sql1);
         $result_check= mysqli_num_rows($result);
     
         if ($result_check > 0) {
